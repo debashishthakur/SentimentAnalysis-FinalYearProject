@@ -1,4 +1,3 @@
-
 import requests
 import json
 from flask import Flask, request
@@ -29,16 +28,19 @@ def index():
 def process_noun():
     # Fetching news
     results = []
-    result={}
+    sentiment_counts = [0, 0, 0]
+    overall_polarity_score = 0
+
     search_word = request.form['noun']
     no_of_articles = 10
 
-    url = f'https://newsapi.org/v2/everything?q={search_word}&sortBy=relevancyAt&pageSize={no_of_articles}&apiKey=5081961eb5d94cabaf80779f9ecbf515&language=en'
-
+    url = f'https://newsapi.org/v2/everything?q={search_word}&sortBy=relevancyAt&searchIn=title&pageSize={no_of_articles}&apiKey=5081961eb5d94cabaf80779f9ecbf515&language=en'
 
     response = requests.get(url)
     data = response.json()
     articles = data.get('articles')
+
+    sentiment_counts=[0,0,0]
 
     for article in articles:
         title = article['title']
@@ -69,60 +71,55 @@ def process_noun():
         else:
             sentiment = 'Neutral'
 
-        # Create a bar chart to display the sentiment analysis results
-        sentiments = ["Positive", "Negative", "Neutral"]
-        counts = [0, 0, 0]
+        # Update sentiment counts and overall polarity score
         if sentiment == "Positive":
-            counts[0] = 1
+            sentiment_counts[0] += 1
         elif sentiment == "Negative":
-            counts[1] = 1
+            sentiment_counts[1] += 1
         else:
-            counts[2] = 1
+            sentiment_counts[2] += 1
 
-        plt.bar(sentiments, counts)
-        plt.title("Overall Sentiment Analysis")
-        plt.xlabel("Sentiment")
-        plt.ylabel("Count")
-        plt.show()
-
-
-        # Analyze each sentence and keep track of the sentiment scores
-        pos_count = 0
-        neg_count = 0
-        neu_count = 0
-        pol_score = 0
-        for sentence in summary:
-            score = analyzer.polarity_scores(str(sentence))
-            if score['compound'] > 0.1:
-                pos_count += 1
-            elif score['compound'] < -0.1:
-                neg_count += 1
-            else:
-                neu_count += 1 
-        pol_score = pol_score+ score['compound']
-                
-        # Create a pie chart to display the sentiment analysis results
-        labels = ['Positive', 'Negative', 'Neutral']
-        sizes = [pos_count, neg_count, neu_count]
-        colors = ['#00ff00', '#ff0000', '#ffff00']
-        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
-        plt.axis('equal')
-        plt.title('Sentiment Analysis Results')
-        plt.show()
+        overall_polarity_score += sentiment_scores['compound']
 
         # Store the results
         result = {
             "title": title,
             "url": url,
             "sentiment": sentiment,
-            "positive_count": counts[0],
-            "negative_count": counts[1],
-            "neutral_count": counts[2],
+            "positive_count": sentiment_counts[0],
+            "negative_count": sentiment_counts[1],
+            "neutral_count": sentiment_counts[2],
             "overall_polarity_score": sentiment_scores['compound']
         }
         results.append(result)
 
-        # print(response.json())
+    # Calculate average sentiment counts and overall polarity score
+    average_sentiment_counts = [count / len(articles) for count in sentiment_counts]
+    average_polarity_score = overall_polarity_score / len(articles)
+
+
+    # Calculate average sentiment counts and overall polarity score
+    average_sentiment_counts = [count / len(articles) for count in sentiment_counts]
+    average_polarity_score = overall_polarity_score / len(articles)
+
+    sentiments = ["Positive", "Negative", "Neutral"]
+    colors = ['#00ff00', '#ff0000', '#ffff00']
+
+    plt.bar(sentiments, average_sentiment_counts, color=colors)
+    plt.title("Average Sentiment Analysis")
+    plt.xlabel("Sentiment")
+    plt.ylabel("Count")
+    plt.show()
+
+    # Create the pie chart using average sentiment counts
+    labels = ['Positive', 'Negative', 'Neutral']
+    sizes = average_sentiment_counts
+    colors = ['#00ff00', '#ff0000', '#ffff00']
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+    plt.axis('equal')
+    plt.title('Average Sentiment Analysis Results')
+    plt.show()
+
     return json.dumps(results)
 
 if __name__ == '__main__':
