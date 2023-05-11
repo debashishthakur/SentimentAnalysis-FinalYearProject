@@ -33,7 +33,7 @@ def process_noun():
     search_word = request.form['noun']
     no_of_articles = 10
 
-    url = f'https://newsapi.org/v2/everything?q={search_word}&sortBy=publishedAt&pageSize={no_of_articles}&apiKey=5081961eb5d94cabaf80779f9ecbf515&language=en'
+    url = f'https://newsapi.org/v2/everything?q={search_word}&sortBy=relevancyAt&pageSize={no_of_articles}&apiKey=5081961eb5d94cabaf80779f9ecbf515&language=en'
 
 
     response = requests.get(url)
