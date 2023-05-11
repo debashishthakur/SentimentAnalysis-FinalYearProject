@@ -1,0 +1,172 @@
+# from flask import Flask, request
+# from bs4 import BeautifulSoup
+# import requests
+# from textblob import TextBlob
+
+# app = Flask(__name__)
+
+# @app.route('/')
+# def index():
+#     return '''
+#         <form action="/process-noun" method="post">
+#             <label for="noun">Enter a noun:</label>
+#             <input type="text" id="noun" name="noun" required>
+#             <button type="submit">Submit</button>
+#         </form>
+#     '''
+
+# @app.route('/process-noun', methods=['POST'])
+# def process_noun():
+#     noun = request.form['noun']
+#     # scrape Google News for articles related to the noun
+#     url = f'https://news.google.com/search?q={noun}&hl=en-US&gl=US&ceid=US%3Aen'
+#     response = requests.get(url)
+#     soup = BeautifulSoup(response.text, 'html.parser')
+#     articles = []
+#     for article in soup.select('article'):
+#         articles.append(article.text.strip())
+#     # perform sentiment analysis on the scraped articles
+#     sentiment_scores = []
+#     for article in articles:
+#         blob = TextBlob(article)
+#         sentiment_scores.append(blob.sentiment.polarity)
+#     average_sentiment = sum(sentiment_scores) / len(sentiment_scores)
+#     # categorize sentiment score
+#     if average_sentiment > 0.2:
+#         sentiment_category = "Good"
+#     elif average_sentiment < -0.2:
+#         sentiment_category = "Poor"
+#     else:
+#         sentiment_category = "Neutral"
+#     return f'The general sentiment for articles related to {noun} is {sentiment_category}.'
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
+# import requests
+# import json
+# import re
+# import string
+# import flask
+# from flask import Flask, request
+# from newspaper import Article
+# from sumy.summarizers.lex_rank import LexRankSummarizer
+# from sumy.nlp.tokenizers import Tokenizer
+# from sumy.parsers.plaintext import PlaintextParser
+# import matplotlib.pyplot as plt
+# from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# app = Flask(__name__)
+
+# @app.route('/process-noun', methods=['POST'])
+# def process_noun():
+#     # Fetching news
+#     search_word = request.form['noun']
+#     # no_of_articles = input('How many articles do you want?')
+#     no_of_articles = 10
+
+#     url = f'https://newsapi.org/v2/everything?q={search_word}&sortBy=relevency&searching=title&pageSize={no_of_articles}&sortBy=publishedAt&apiKey=792afb7c04c249f380470bd59566e830&language=en'
+
+#     response = requests.get(url)
+#     data = response.json()
+#     articles = data.get('articles')
+
+
+#     data = ''
+#     count = 0
+#     pol = 0
+#     # Getting url, title, desc, content
+#     for i in articles:
+#         title = i['title']
+#         url = i['url']
+#         article = Article(url)
+#         article.download()
+#         article.parse()
+#         title = article.title
+#         authors = article.authors
+#         publish_date = article.publish_date
+
+#         text = article.text
+#         summary = article.summary
+#         img = article.top_image
+#         # print(img)
+#         # print(text)
+
+#         # Sumamrize the text
+#         parser = PlaintextParser.from_string(text, Tokenizer("english"))
+#         summarizer = LexRankSummarizer()
+#         summary = summarizer(parser.document, sentences_count=3)
+#         for sentence in summary:
+#             print(sentence)
+
+#         # Analyse using VaderLibrary
+#         # Initialize the VADER sentiment analyzer
+#         analyzer = SentimentIntensityAnalyzer()
+
+        
+#         # Analyze each sentence and keep track of the sentiment scores
+#         pos_count = 0
+#         neg_count = 0
+#         neu_count = 0
+
+#         pol_score =0
+#         for sentence in summary:
+#             score = analyzer.polarity_scores(str(sentence))
+#             if score['compound'] > 0.1:
+#                 pos_count += 1
+#             elif score['compound'] < -0.1:
+#                 neg_count += 1
+#             else:
+#                 neu_count += 1 
+#         pol_score = pol_score+ score['compound']
+                
+#         # Create a pie chart to display the sentiment analysis results
+#         labels = ['Positive', 'Negative', 'Neutral']
+#         sizes = [pos_count, neg_count, neu_count]
+#         colors = ['#00ff00', '#ff0000', '#ffff00']
+#         plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+#         plt.axis('equal')
+#         plt.title('Sentiment Analysis Results')
+#         plt.show()
+
+#     # Displaying the overall polarity in a bar chart
+#     print(f'The overall polarity score is {pol_score}')
+#     # Assume compound score is stored in a variable named "pol_score"
+#     if pol_score >= 0.05:
+#         sentiment = "Positive"
+#     elif pol_score <= -0.05:
+#         sentiment = "Negative"
+#     else:
+#         sentiment = "Neutral"
+
+#     # Create a bar chart
+#     sentiments = ["Positive", "Negative", "Neutral"]
+#     counts = [0, 0, 0]
+#     if sentiment == "Positive":
+#         counts[0] = 1
+#     elif sentiment == "Negative":
+#         counts[1] = 1
+#     else:
+#         counts[2] = 1
+
+#     plt.bar(sentiments, counts)
+#     plt.title("Overall Sentiment Analysis")
+#     plt.xlabel("Sentiment")
+#     plt.ylabel("Count")
+#     plt.show()
+
+# time_elem = soup.find('time')
+# if time_elem:
+#     publish_date = time_elem['datetime']
+# else:
+#   publish_date = ''
+
+# time_tag = soup.find('time')
+# if time_tag is not None:
+#   publish_date = time_tag.get('datetime')
+# else:
+#   publish_date = None
+
+
+# publish_date = soup.find('time')['datetime']
