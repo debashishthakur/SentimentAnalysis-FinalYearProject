@@ -120,7 +120,18 @@ def process_noun():
     plt.title('Average Sentiment Analysis Results')
     plt.show()
 
-    return json.dumps(results)
+    html_response = "<h1>News Results</h1>"
+    for result in results:
+        html_response += f"<h2>{result['title']}</h2>"
+        html_response += f"<p><strong>Sentiment:</strong> {result['sentiment']}</p>"
+        html_response += f"<p><strong>Positive Count:</strong> {result['positive_count']}</p>"
+        html_response += f"<p><strong>Negative Count:</strong> {result['negative_count']}</p>"
+        html_response += f"<p><strong>Neutral Count:</strong> {result['neutral_count']}</p>"
+        html_response += f"<p><strong>Overall Polarity Score:</strong> {result['overall_polarity_score']}</p>"
+        html_response += f"<p><a href='{result['url']}' target='_blank'>Read More</a></p>"
+        html_response += "<hr>"
+
+    return html_response
 
 if __name__ == '__main__':
     app.run(debug=True)
