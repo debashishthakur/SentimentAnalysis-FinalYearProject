@@ -1,0 +1,1 @@
+pip install newspaper3k sumy matplotlib feedparser Flask requests beautifulsoup4

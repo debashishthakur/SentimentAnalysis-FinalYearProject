@@ -85,6 +85,31 @@ def process_noun():
         plt.ylabel("Count")
         plt.show()
 
+
+        # Analyze each sentence and keep track of the sentiment scores
+        pos_count = 0
+        neg_count = 0
+        neu_count = 0
+        pol_score = 0
+        for sentence in summary:
+            score = analyzer.polarity_scores(str(sentence))
+            if score['compound'] > 0.1:
+                pos_count += 1
+            elif score['compound'] < -0.1:
+                neg_count += 1
+            else:
+                neu_count += 1 
+        pol_score = pol_score+ score['compound']
+                
+        # Create a pie chart to display the sentiment analysis results
+        labels = ['Positive', 'Negative', 'Neutral']
+        sizes = [pos_count, neg_count, neu_count]
+        colors = ['#00ff00', '#ff0000', '#ffff00']
+        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+        plt.axis('equal')
+        plt.title('Sentiment Analysis Results')
+        plt.show()
+
         # Store the results
         result = {
             "title": title,
