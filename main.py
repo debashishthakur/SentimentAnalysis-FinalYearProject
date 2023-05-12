@@ -21,12 +21,149 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return '''
-        <form action="/process-noun" method="post">
-            <label for="noun">Enter a noun:</label>
-            <input type="text" id="noun" name="noun" required>
-            <button type="submit">Submit</button>
-        </form>
+        <html>
+            <head>
+                <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+                <style>
+                    body {
+                        background: linear-gradient(135deg, #292929, #121212);
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        font-family: Arial, sans-serif;
+                        color: #ffffff;
+                        font-family: 'Roboto', Arial, sans-serif;
+                    }
+
+                    h1 {
+                        color: #ffffff;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                        margin-bottom: 80px;
+                    }
+
+                    .container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .box {
+                        width: 400;
+                        height: 200;
+                        border-radius: 10px;
+                        text-align: center;
+                        line-height: 200px;
+                        font-size: 18px;
+                        margin: 0 43px;
+                        transition: box-shadow 0.3s;
+                    }
+
+                    .box-twitter {
+                        background: linear-gradient(45deg, #00c6fb, #005bea);
+                        box-shadow: 0 0 10px rgba(17, 173, 242, 0.4);
+                        color: #ffffff;
+                    }
+
+                    .box-news {
+                        background: linear-gradient(45deg, #fc4a1a, #f7b733);
+                        box-shadow: 0 0 10px rgba(236, 119, 50, 0.4);
+                        color: #ffffff;
+                    }
+
+                    .box-review {
+                        background: linear-gradient(45deg, #7f00ff, #e100ff);
+                        box-shadow: 0 0 10px rgba(181, 78, 255, 0.4);
+                        color: #ffffff;
+                    }
+
+                    .box:hover {
+                        box-shadow: 0 0 20px rgba(163, 177, 198, 0.8);
+                    }
+                    a{
+                        text-decoration: none;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Web-Sentiment Analysis</h1>
+                <div class="container">
+                    <a class="box box-twitter" href="/search">Twitter Review</a>
+                    <a class="box box-news" href="/search">News Review</a>
+                    <a class="box box-review" href="/search">Review Analysis</a>
+                </div>
+            </body>
+        </html>
     '''
+
+@app.route('/search')
+def search():
+    return '''
+        <html>
+            <head>
+                <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+                <style>
+                    body {
+                        background: linear-gradient(135deg, #292929, #121212);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        font-family: 'Roboto', Arial, sans-serif;
+                        color: #ffffff;
+                    }
+
+                    .form-container {
+                        background: linear-gradient(45deg, #00c6fb, #005bea);
+                        box-shadow: 0 0 10px rgba(17, 173, 242, 0.4);
+                        padding: 20px;
+                        border-radius: 20px;
+                        text-align: center;
+                    }
+
+                    .form-label {
+                        font-weight: bold;
+                        margin-bottom: 10px;
+                        color: #ffffff;
+                    }
+
+                    .form-input {
+                        padding: 8px;
+                        border: none;
+                        border-radius: 6px;
+                        width: 200px;
+                        font-size: 16px;
+                    }
+
+                    .form-button {
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 6px;
+                        background-color: #4b7bec;
+                        color: #ffffff;
+                        cursor: pointer;
+                        font-size: 16px;
+                        margin-top: 10px;
+                    }
+
+                    .form-button:hover {
+                        background-color: #3867d6;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="form-container">
+                    <form action="/process-noun" method="post">
+                        <label class="form-label" for="noun">Enter a noun:</label>
+                        <input class="form-input" type="text" id="noun" name="noun" required>
+                        <button class="form-button" type="submit">Submit</button>
+                    </form>
+                </div>
+            </body>
+        </html>
+    '''
+
 
 @app.route('/process-noun', methods=['POST'])
 def process_noun():
@@ -80,14 +217,82 @@ def process_noun():
         }
         results.append(result)
 
-    html_response = "<h1>News Results</h1>"
+    html_response = '''
+        <html>
+            <head>
+                <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+                <style>
+                    body {
+                        background: linear-gradient(135deg, #292929, #121212);
+                        font-family: 'Roboto', Arial, sans-serif;
+                        color: #ffffff;
+                        padding: 30px;
+                    }
+
+                    .result-container {
+                        background: linear-gradient(135deg, #292929, #121212);
+                        box-shadow: 0 0 10px rgba(17, 173, 242, 0.4);
+                        padding: 20px;
+                        border-radius: 20px;
+                        margin-bottom: 20px;
+                    }
+
+                    .result-title {
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin-bottom: 10px;
+                        color: #ffffff;
+                    }
+
+                    .result-sentiment {
+                        font-size: 18px;
+                        color: #ffffff;
+                    }
+
+                    .result-polarity {
+                        font-size: 16px;
+                        margin-bottom: 10px;
+                        color: #ffffff;
+                    }
+
+                    .result-link {
+                        font-size: 16px;
+                        color: #ffffff;
+                        text-decoration: none;
+                    }
+
+                    .result-link:hover {
+                        text-decoration: underline;
+                    }
+
+                    .result-chart {
+                        margin-top: 20px;
+                    }
+
+                    h1 {
+                        color: #ffffff;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                        margin-bottom: 30px;
+                        text-align: center;
+                    }
+
+                </style>
+            </head>
+            <body>
+                <h1>News Results</h1>
+    '''
 
     for result in results:
-        html_response += f"<h2>{result['title']}</h2>"
-        html_response += f"<p><strong>Sentiment:</strong> {result['sentiment']}</p>"
-        html_response += f"<p><strong>Overall Polarity Score:</strong> {result['overall_polarity_score']}</p>"
-        html_response += f"<p><a href='{result['url']}' target='_blank'>Read More</a></p>"
-        html_response += "<hr/>"
+        html_response += '''
+            <div class="result-container">
+                <h2 class="result-title">{}</h2>
+                <p class="result-sentiment">Sentiment: {}</p>
+                <p class="result-polarity">Overall Polarity Score: {}</p>
+                <p class="result-link"><a href="{}" target="_blank">Read More</a></p>
+                <hr/>
+            </div>
+        '''.format(result['title'], result['sentiment'], result['overall_polarity_score'], result['url'])
+
 
         # Analyze each article separately and create the pie chart for sentiment analysis
         summarized_text = summarizer(parser.document, sentences_count=3)
@@ -123,9 +328,14 @@ def process_noun():
         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
 
     # Add the chart to the HTML response
-    html_response += "<p><strong>Sentiment Analysis Chart:</strong></p>"
-    html_response += f"<img src='data:image/png;base64,{encoded_string}' alt='Sentiment Analysis Chart'>"
-    html_response += "<hr/>"
+    html_response += '''
+        <div class="result-container">
+            <p class="result-chart-title"><strong>Sentiment Analysis Chart:</strong></p>
+            <img class="result-chart" src='data:image/png;base64,{}' alt='Sentiment Analysis Chart'>
+            <hr/>
+        </div>
+    '''.format(encoded_string)
+
     
     return html_response
 
