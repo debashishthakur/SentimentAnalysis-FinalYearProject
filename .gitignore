@@ -170,3 +170,4 @@
 
 
 # publish_date = soup.find('time')['datetime']
+*.png
